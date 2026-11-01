@@ -142,6 +142,27 @@ Frontend runs at: **`http://localhost:3000`**
 
 ---
 
+## 🌐 1-Click Free Cloud Deployment
+
+Deploy the entire platform (both the Scikit-learn backend and React dashboard) with zero configuration:
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Altamash346/predictive-maintenance-ml)
+
+### Deploying via Render (Recommended)
+1. Sign in to [Render.com](https://render.com) using your GitHub account.
+2. Click **New +** &rarr; **Blueprint** (or click the button above).
+3. Connect `https://github.com/Altamash346/predictive-maintenance-ml`.
+4. Render will automatically read `render.yaml`, build the Python environment, and serve the full React web app and ML APIs on a live `https://*.onrender.com` URL.
+
+### Deploying via Docker
+```bash
+docker build -t predictive-maintenance-ml .
+docker run -p 8000:8000 predictive-maintenance-ml
+```
+Navigate to `http://localhost:8000`.
+
+---
+
 ## 📑 Machine Learning FAQ & Design Rationale
 
 1. **Why is raw accuracy misleading for this dataset?**  

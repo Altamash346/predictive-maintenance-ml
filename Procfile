@@ -1,1 +1,1 @@
-web: cd backend && pip install -r requirements.txt && python -c "from database import DB_PATH; from etl.etl_pipeline import ETLPipeline; ETLPipeline().run() if not DB_PATH.exists() else None" && uvicorn main:app --host 0.0.0.0 --port $PORT
+web: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
