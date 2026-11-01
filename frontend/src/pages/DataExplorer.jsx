@@ -58,13 +58,13 @@ export default function DataExplorer() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-gray-900 tracking-tight">Machine Logs</h2>
+          <h2 className="text-xl font-bold text-gray-900 tracking-tight">Dataset & Feature Explorer</h2>
           <p className="text-xs text-gray-500 mt-0.5">
-            Inspect raw machine sensor logs alongside cleaned Data Warehouse fact records
+            Browse 10,000 industrial sensor instances, engineered physical feature vectors, and target classifications
           </p>
         </div>
 
-        {/* View Switcher: Star Schema Facts vs Raw Ingestion */}
+        {/* View Switcher: Engineered Features vs Raw Ingestion */}
         <div className="flex items-center bg-gray-100 border border-gray-200 rounded-lg p-1 text-xs">
           <button
             onClick={() => setDataView('warehouse')}
@@ -74,7 +74,7 @@ export default function DataExplorer() {
                 : 'text-gray-500 hover:text-gray-900'
             }`}
           >
-            Star Schema Facts (Cleaned)
+            Engineered Features Matrix
           </button>
           <button
             onClick={() => setDataView('raw_source')}
@@ -84,7 +84,7 @@ export default function DataExplorer() {
                 : 'text-gray-500 hover:text-gray-900'
             }`}
           >
-            Raw Source CSV Schema
+            Raw Sensor Telemetry
           </button>
         </div>
       </div>
@@ -195,7 +195,7 @@ export default function DataExplorer() {
                 <tr>
                   <td colSpan={dataView === 'warehouse' ? 13 : 11} className="py-12 text-center text-gray-500 font-sans">
                     <RefreshCw className="w-6 h-6 text-blue-500 animate-spin mx-auto mb-2" />
-                    Fetching warehouse records...
+                    Fetching dataset instances...
                   </td>
                 </tr>
               ) : records.length === 0 ? (

@@ -4,7 +4,7 @@ import {
 } from '../services/api';
 import StatCard from '../components/StatCard';
 import { 
-  Server, 
+  Database, 
   AlertTriangle, 
   Gauge, 
   Wrench, 
@@ -12,7 +12,9 @@ import {
   Thermometer, 
   Zap, 
   CheckCircle2, 
-  RefreshCw 
+  RefreshCw,
+  Cpu,
+  Layers
 } from 'lucide-react';
 import { 
   BarChart, 
@@ -57,7 +59,7 @@ export default function Dashboard() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-3">
           <RefreshCw className="w-8 h-8 text-blue-500 animate-spin" />
-          <p className="text-sm text-gray-500">Loading Data Warehouse metrics...</p>
+          <p className="text-sm text-gray-500">Loading Machine Learning telemetry metrics...</p>
         </div>
       </div>
     );
@@ -84,10 +86,10 @@ export default function Dashboard() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-bold text-gray-900 tracking-tight">
-            Industrial Maintenance Warehouse Dashboard
+            Predictive Maintenance Machine Learning Dashboard
           </h2>
           <p className="text-xs text-gray-500 mt-0.5">
-            Operational telemetry and analytical metrics extracted from AI4I 2020 Star Schema warehouse
+            Operational sensor telemetry, target class distributions, and feature indicators from AI4I 2020 dataset
           </p>
         </div>
         <button
@@ -95,35 +97,35 @@ export default function Dashboard() {
           className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-medium border border-gray-200 transition"
         >
           <RefreshCw className="w-3.5 h-3.5" />
-          <span>Refresh Cube</span>
+          <span>Refresh Metrics</span>
         </button>
       </div>
 
       {/* Top 6 Industrial KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         <StatCard
-          title="Total Machines"
+          title="Dataset Samples"
           value={kpis.total_records?.toLocaleString()}
-          subtitle="Monitored records in DW"
-          icon={Server}
+          subtitle="Total observations in dataset"
+          icon={Database}
           color="blue"
-          badge="Fact Rows"
+          badge="10k Samples"
         />
         <StatCard
-          title="Total Failures"
+          title="Target Failures"
           value={kpis.total_failures?.toLocaleString()}
-          subtitle="Machine breakdowns"
+          subtitle="Positive class instances (y=1)"
           icon={AlertTriangle}
           color="rose"
-          badge="Failure Facts"
+          badge="Positive Class"
         />
         <StatCard
-          title="Failure Rate"
+          title="Class Imbalance"
           value={`${kpis.failure_rate_pct}%`}
-          subtitle="Overall breakdown ratio"
+          subtitle="Positive to negative ratio"
           icon={Activity}
           color="amber"
-          badge="Metric"
+          badge="3.4% Failure"
         />
         <StatCard
           title="Avg Torque"
@@ -132,7 +134,7 @@ export default function Dashboard() {
           subtitle="Rotational mechanical load"
           icon={Gauge}
           color="cyan"
-          badge="Measure"
+          badge="Feature X₁"
         />
         <StatCard
           title="Avg Tool Wear"
@@ -141,16 +143,16 @@ export default function Dashboard() {
           subtitle="Tool cutting life spent"
           icon={Wrench}
           color="purple"
-          badge="Measure"
+          badge="Feature X₂"
         />
         <StatCard
-          title="Avg Speed"
+          title="Avg Spindle Speed"
           value={kpis.avg_rotational_speed}
           unit="rpm"
           subtitle="Spindle angular velocity"
           icon={Zap}
           color="emerald"
-          badge="Measure"
+          badge="Feature X₃"
         />
       </div>
 
@@ -160,11 +162,11 @@ export default function Dashboard() {
         <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-5">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-sm font-semibold text-gray-900">Machine Failure by Product Quality Grade</h3>
-              <p className="text-xs text-gray-500">Dimension: DIM_PRODUCT (L: 50%, M: 30%, H: 20%)</p>
+              <h3 className="text-sm font-semibold text-gray-900">Failure Distribution by Product Variant</h3>
+              <p className="text-xs text-gray-500">Categorical Feature: Quality Grade (L: 50%, M: 30%, H: 20%)</p>
             </div>
             <span className="text-[11px] px-2 py-0.5 rounded bg-blue-50 text-blue-600 border border-blue-200 font-medium">
-              Product Dimension
+              Categorical Feature
             </span>
           </div>
 
@@ -179,13 +181,13 @@ export default function Dashboard() {
                   itemStyle={{ color: '#374151' }}
                 />
                 <Legend wrapperStyle={{ fontSize: '11px' }} />
-                <Bar dataKey="total_machines" name="Total Machines" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="failures" name="Total Failures" fill="#ef4444" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="total_machines" name="Total Observations" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="failures" name="Failure Instances (y=1)" fill="#ef4444" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
           <p className="text-[11px] text-gray-500 mt-2 bg-gray-50 p-2 rounded border border-gray-200">
-            Observation: Low quality variant (L) machines account for majority of industrial failures due to tighter strain tolerances.
+            Feature Correlation: Light quality variant (L) machines exhibit the highest failure count due to tighter mechanical strain tolerances.
           </p>
         </div>
 
@@ -193,11 +195,11 @@ export default function Dashboard() {
         <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-5">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-sm font-semibold text-gray-900">Failure Risk by Tool Wear Life Stage</h3>
-              <p className="text-xs text-gray-500">Dimension: DIM_SENSOR (Low &lt; 80m, Moderate 80-160m, Critical &gt; 160m)</p>
+              <h3 className="text-sm font-semibold text-gray-900">Failure Risk vs Tool Wear Feature Bins</h3>
+              <p className="text-xs text-gray-500">Continuous Feature Discretization: Low (&lt;80m), Moderate (80-160m), Critical (&gt;160m)</p>
             </div>
             <span className="text-[11px] px-2 py-0.5 rounded bg-purple-50 text-purple-600 border border-purple-200 font-medium">
-              Sensor Dimension
+              Feature Discretization
             </span>
           </div>
 
@@ -218,7 +220,7 @@ export default function Dashboard() {
             </ResponsiveContainer>
           </div>
           <p className="text-[11px] text-gray-500 mt-2 bg-gray-50 p-2 rounded border border-gray-200">
-            Observation: Machine failure probability increases more than 4x once tool wear surpasses 160 minutes.
+            Nonlinear Decision Boundary: Failure probability escalates nonlinearly once cutting tool wear exceeds 160 minutes.
           </p>
         </div>
 
@@ -226,11 +228,11 @@ export default function Dashboard() {
         <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-5">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-sm font-semibold text-gray-900">Monthly Temporal Trend (Calendar Year 2020)</h3>
-              <p className="text-xs text-gray-500">Dimension: DIM_DATE (Simulated chronological timeline)</p>
+              <h3 className="text-sm font-semibold text-gray-900">Temporal Telemetry & Load Dynamics</h3>
+              <p className="text-xs text-gray-500">Simulated chronological evaluation timeline across operational batches</p>
             </div>
             <span className="text-[11px] px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 border border-emerald-200 font-medium">
-              Time Dimension
+              Temporal Dynamics
             </span>
           </div>
 
@@ -245,13 +247,13 @@ export default function Dashboard() {
                   itemStyle={{ color: '#374151' }}
                 />
                 <Legend wrapperStyle={{ fontSize: '11px' }} />
-                <Line type="monotone" dataKey="failures" name="Failures Occurred" stroke="#ef4444" strokeWidth={2} dot={{ r: 3 }} />
+                <Line type="monotone" dataKey="failures" name="Failure Events" stroke="#ef4444" strokeWidth={2} dot={{ r: 3 }} />
                 <Line type="monotone" dataKey="avg_torque" name="Avg Torque (Nm)" stroke="#06b6d4" strokeWidth={2} dot={{ r: 2 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
           <p className="text-[11px] text-gray-500 mt-2 bg-gray-50 p-2 rounded border border-gray-200">
-            Observation: Temporal roll-up allows managers to inspect seasonal factory loads and plan preventive maintenance shutdowns.
+            Trend Analysis: Spikes in operational torque correlate directly with clusters of machine breakdowns.
           </p>
         </div>
 
@@ -259,11 +261,11 @@ export default function Dashboard() {
         <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-5">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-sm font-semibold text-gray-900">Specific Failure Mode Breakdown</h3>
-              <p className="text-xs text-gray-500">Dimension: DIM_FAILURE (HDF, PWF, OSF, TWF, RNF)</p>
+              <h3 className="text-sm font-semibold text-gray-900">Multi-Class Target Failure Modes</h3>
+              <p className="text-xs text-gray-500">Distribution of discrete failure causes (HDF, PWF, OSF, TWF, RNF)</p>
             </div>
             <span className="text-[11px] px-2 py-0.5 rounded bg-rose-50 text-rose-600 border border-rose-200 font-medium">
-              Failure Dimension
+              Target Classes
             </span>
           </div>
 
@@ -293,7 +295,7 @@ export default function Dashboard() {
             </ResponsiveContainer>
           </div>
           <p className="text-[11px] text-gray-500 mt-2 bg-gray-50 p-2 rounded border border-gray-200">
-            Note: Heat Dissipation (HDF) and Power Failure (PWF) represent critical operational modes requiring cooling & electrical checks.
+            Multi-class Target Breakdown: Heat Dissipation (HDF) and Power Failure (PWF) account for the vast majority of mechanical anomalies.
           </p>
         </div>
       </div>

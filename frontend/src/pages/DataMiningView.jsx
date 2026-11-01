@@ -92,9 +92,9 @@ export default function DataMiningView() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-gray-900 tracking-tight">Data Mining Engine</h2>
+          <h2 className="text-xl font-bold text-gray-900 tracking-tight">Machine Learning Model Evaluation & Pattern Discovery</h2>
           <p className="text-xs text-gray-500 mt-0.5">
-            Supervised machine breakdown classification, unsupervised K-Means clustering, and frequent association rule mining
+            Supervised classification model benchmarking, decision boundaries, unsupervised K-Means clustering, and feature co-occurrences
           </p>
         </div>
       </div>
@@ -105,36 +105,36 @@ export default function DataMiningView() {
           onClick={() => setActiveTab('classification')}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition ${
             activeTab === 'classification'
-              ? 'bg-blue-600 text-gray-900 shadow-md shadow-blue-500/20'
+              ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
               : 'bg-gray-50 text-gray-500 hover:text-gray-900 border border-gray-200'
           }`}
         >
           <Cpu className="w-4 h-4" />
-          <span>1. Classification Models</span>
+          <span>1. Supervised Models</span>
         </button>
 
         <button
           onClick={() => { setActiveTab('clustering'); if (!clusterData) loadClustering(kClusters); }}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition ${
             activeTab === 'clustering'
-              ? 'bg-blue-600 text-gray-900 shadow-md shadow-blue-500/20'
+              ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
               : 'bg-gray-50 text-gray-500 hover:text-gray-900 border border-gray-200'
           }`}
         >
           <Sliders className="w-4 h-4" />
-          <span>2. K-Means Clustering (PCA 2D)</span>
+          <span>2. Unsupervised Clustering & PCA</span>
         </button>
 
         <button
           onClick={() => { setActiveTab('association'); if (!associationData) loadAssociation(); }}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition ${
             activeTab === 'association'
-              ? 'bg-blue-600 text-gray-900 shadow-md shadow-blue-500/20'
+              ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
               : 'bg-gray-50 text-gray-500 hover:text-gray-900 border border-gray-200'
           }`}
         >
           <Share2 className="w-4 h-4" />
-          <span>3. Association / Pattern Rules</span>
+          <span>3. Feature Co-occurrence Rules</span>
         </button>
       </div>
 

@@ -2,10 +2,7 @@ import React from 'react';
 import { 
   LayoutDashboard, 
   Database, 
-  GitFork, 
-  Layers, 
   Workflow, 
-  Compass, 
   Cpu, 
   LineChart, 
   FileText,
@@ -15,21 +12,21 @@ import {
 } from 'lucide-react';
 
 const ALL_NAV_ITEMS = [
-  { id: 'dashboard',  label: 'Dashboard',           icon: LayoutDashboard, roles: ['admin','mechanic'] },
-  { id: 'explorer',   label: 'Machine Logs',         icon: Database,        roles: ['admin'] },
-  { id: 'warehouse',  label: 'Data Warehouse',       icon: Layers,          roles: ['admin'] },
-  { id: 'olap',       label: 'OLAP Analysis',        icon: Compass,         roles: ['admin'] },
-  { id: 'mining',     label: 'Data Mining',          icon: Cpu,             roles: ['admin'] },
-  { id: 'analytics',  label: 'Analytics',            icon: LineChart,       roles: ['admin','mechanic'] },
-  { id: 'predictor',  label: 'Failure Predictor',    icon: Zap,             roles: ['admin','mechanic'] },
-  { id: 'about',      label: 'System Documentation', icon: FileText,        roles: ['admin','mechanic'] },
+  { id: 'dashboard',  label: 'ML Overview',                 icon: LayoutDashboard, section: 'core',  roles: ['admin','mechanic'] },
+  { id: 'analytics',  label: 'Exploratory Data Analysis',   icon: LineChart,       section: 'core',  roles: ['admin','mechanic'] },
+  { id: 'predictor',  label: 'Live Model Inference',        icon: Zap,             section: 'core',  roles: ['admin','mechanic'] },
+  { id: 'explorer',   label: 'Dataset & Features',          icon: Database,        section: 'ml',    roles: ['admin'] },
+  { id: 'pipeline',   label: 'Feature Pipeline',            icon: Workflow,        section: 'ml',    roles: ['admin'] },
+  { id: 'mining',     label: 'Model Evaluation',            icon: Cpu,             section: 'ml',    roles: ['admin'] },
+  { id: 'about',      label: 'ML System Documentation',     icon: FileText,        section: 'help',  roles: ['admin','mechanic'] },
 ];
 
 export default function Sidebar({ activeTab, setActiveTab, userRole }) {
-  const navItems = ALL_NAV_ITEMS.filter((item) => item.roles.includes(userRole));
+  const visibleItems = ALL_NAV_ITEMS.filter((item) => item.roles.includes(userRole));
 
-  const adminItems = navItems.filter(i => ['explorer','warehouse','olap','mining'].includes(i.id));
-  const commonItems = navItems.filter(i => !['explorer','warehouse','olap','mining'].includes(i.id));
+  const coreItems = visibleItems.filter(i => i.section === 'core');
+  const mlItems = visibleItems.filter(i => i.section === 'ml');
+  const helpItems = visibleItems.filter(i => i.section === 'help');
 
   const renderItem = (item) => {
     const Icon = item.icon;
@@ -55,27 +52,27 @@ export default function Sidebar({ activeTab, setActiveTab, userRole }) {
     <aside className="w-64 border-r border-gray-200 bg-white flex flex-col shrink-0 min-h-[calc(100vh-4rem)] shadow-sm">
       <div className="p-4 flex-1">
 
-        {/* Common tabs (visible to all) */}
+        {/* Core telemetry & operations */}
         <div className="mb-4">
           <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2">
-            Operations
+            Model & Operations
           </div>
           <nav className="space-y-1">
-            {commonItems.filter(i => i.id !== 'about').map(renderItem)}
+            {coreItems.map(renderItem)}
           </nav>
         </div>
 
-        {/* Admin-only tabs */}
-        {adminItems.length > 0 && (
+        {/* Machine Learning Engineering (Admin) */}
+        {mlItems.length > 0 && (
           <div className="mb-4">
             <div className="flex items-center gap-1.5 px-3 mb-2">
               <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
-                Data & Analytics
+                Machine Learning
               </div>
               <Shield className="w-3 h-3 text-blue-700" />
             </div>
             <nav className="space-y-1">
-              {adminItems.map(renderItem)}
+              {mlItems.map(renderItem)}
             </nav>
           </div>
         )}
@@ -83,10 +80,10 @@ export default function Sidebar({ activeTab, setActiveTab, userRole }) {
         {/* Documentation */}
         <div>
           <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2">
-            Help
+            Reference
           </div>
           <nav className="space-y-1">
-            {commonItems.filter(i => i.id === 'about').map(renderItem)}
+            {helpItems.map(renderItem)}
           </nav>
         </div>
       </div>

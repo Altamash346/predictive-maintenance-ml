@@ -91,9 +91,9 @@ export default function AnalyticsView() {
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h2 className="text-xl font-bold text-gray-900 tracking-tight">Industrial Engineering Analytics</h2>
+        <h2 className="text-xl font-bold text-gray-900 tracking-tight">Exploratory Data Analysis (EDA) & Feature Relationships</h2>
         <p className="text-xs text-gray-500 mt-0.5">
-          Charts and analysis of machine sensor data
+          Feature correlation matrix, bivariate distributions, and physical operational envelopes for predictive machine learning
         </p>
       </div>
 

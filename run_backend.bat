@@ -1,6 +1,6 @@
 @echo off
 echo ======================================================================
-echo  Starting Predictive Maintenance DWM Backend Server (FastAPI)
+echo  Starting Predictive Maintenance ML Backend Server (FastAPI)
 echo ======================================================================
 echo  Host: http://127.0.0.1:8000
 echo  API Documentation: http://127.0.0.1:8000/docs

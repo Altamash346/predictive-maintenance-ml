@@ -63,10 +63,10 @@ export default function FailurePredictor() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h2 className="text-xl font-bold text-gray-900 tracking-tight">
-            Machine Failure Predictor
+            Live Machine Learning Inference Engine
           </h2>
           <p className="text-xs text-gray-500 mt-0.5">
-            Adjust sensor parameters and predict machine failure using a trained Random Forest model
+            Real-time inference using trained Random Forest classifier on telemetry feature vector X
           </p>
         </div>
         <span className="text-[11px] px-3 py-1 rounded-lg bg-emerald-500/15 text-emerald-700 border border-emerald-500/30 font-semibold">
@@ -185,7 +185,7 @@ export default function FailurePredictor() {
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-gray-900 font-semibold rounded-xl shadow-lg shadow-blue-500/20 text-sm transition disabled:opacity-50"
+              className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/20 text-sm transition disabled:opacity-50"
             >
               {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4 fill-current" />}
               <span>Predict</span>

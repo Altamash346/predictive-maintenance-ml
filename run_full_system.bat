@@ -1,10 +1,10 @@
 @echo off
-title Predictive Maintenance DWM System
+title Predictive Maintenance ML System
 echo ======================================================================
-echo  Launching Predictive Maintenance Data Warehouse & Mining System
+echo  Launching Predictive Maintenance Machine Learning System
 echo ======================================================================
-echo  1. Starting Backend & Warehouse API Server (Port 8000)...
-start "DWM Backend API" cmd /k "cd /d %~dp0\backend && python -m uvicorn main:app --host 127.0.0.1 --port 8000"
+echo  1. Starting Backend & ML Inference API Server (Port 8000)...
+start "ML Backend API" cmd /k "cd /d %~dp0\backend && python -m uvicorn main:app --host 127.0.0.1 --port 8000"
 
 echo  2. Waiting for server to initialize...
 timeout /t 3 /nobreak >nul

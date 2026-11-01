@@ -1,139 +1,108 @@
-# Predictive Maintenance Data Warehouse & Mining System (DWM)
+# Predictive Maintenance Machine Learning System
 
-> **Enterprise Platform Specification**  
+> **Machine Learning Project Specification**  
 > **Domain:** Industrial Manufacturing & Predictive Maintenance  
 > **Dataset:** AI4I 2020 Predictive Maintenance Dataset (10,000 Industrial Milling Machine Records)  
-> **Stack:** Python, FastAPI, SQLite (Star Schema), React 19, Vite, Tailwind CSS, Recharts  
+> **Stack:** Python 3.12, FastAPI, Scikit-Learn, Pandas, NumPy, React 19, Vite, Tailwind CSS, Recharts  
 > **License:** 100% Free & Open-Source (No paid APIs or cloud dependencies)
 
 ---
 
 ## 📌 Project Overview
 
-This platform implements an end-to-end industrial **Predictive Maintenance Data Warehouse & Mining System**. The system integrates data warehousing and predictive analytics into a unified, high-performance web application:
+This platform implements an end-to-end industrial **Machine Learning System for Predictive Maintenance**. The system anticipates catastrophic milling machine failure by ingesting real-time operational telemetry, engineering physics-informed domain features, benchmarking supervised classification models, identifying operational regimes via unsupervised clustering, and serving real-time inferences:
 
-1. **Dimensional Data Warehouse:** True relational Star Schema with 1 Central Fact Table and 5 Dimension Tables.
-2. **ETL Pipeline:** Extract &rarr; Clean & Impute &rarr; Transform &rarr; Populate Dimension & Fact Tables into SQLite (`warehouse.db`).
-3. **Interactive OLAP Engine:** Real-time multi-dimensional analytical queries for **Roll-Up**, **Drill-Down**, **Slice**, **Dice**, and **Pivot** with dynamic SQL generation and visual chart analytics.
-4. **Data Mining Engine:** Supervised Classification (**Decision Tree**, **Random Forest**, **Logistic Regression**), live failure inference, unsupervised **K-Means Clustering** with **2D PCA projection**, and **Frequent Association Rule Mining**.
-5. **Industrial Analytics Dashboard:** Dark telemetry monitor featuring real-time KPIs, power dissipation curves, thermal distribution, and correlation matrices.
+1. **Dataset & Feature Store:** 10,000 continuous sensor cycles covering thermodynamic temperatures, spindle speed, rotational torque, tool wear, and product quality grades.
+2. **Feature Engineering Pipeline:** Derives physics-informed indicators ($\Delta T = T_{proc} - T_{air}$, mechanical power $P = \frac{2\pi N}{60} \times \tau$, tool fatigue stress $Wear \times \tau$), performs one-hot encoding, and creates stratified train/test partitions.
+3. **Target Leakage Safeguard:** Eliminates synthetic identifiers (`UDI`, `Product ID`) and direct post-failure flags (`TWF`, `HDF`, `PWF`, `OSF`, `RNF`) to ensure strict zero-leakage realistic test evaluation.
+4. **Supervised Classification Models:** Benchmarks **Random Forest Classifier**, **Decision Tree (CART)**, and **Logistic Regression** with Precision, Recall, F1-Score, and Confusion Matrix diagnostics.
+5. **Unsupervised Anomaly Clustering:** **K-Means Clustering** ($k=2..5$) with **2D PCA Projection** to uncover latent operational regimes without relying on failure annotations.
+6. **Live Inference Simulator:** Real-time parameter sliders allowing engineers to simulate sensor readings and obtain instant model predictions, probability scores, confidence levels, and prescriptive maintenance recommendations.
 
 ---
 
-## 🏛️ Star Schema Architecture
-
-The warehouse is modeled as a classic **Star Schema**:
+## 🏗️ Machine Learning Architecture
 
 ```
-                       ┌─────────────────────────┐
-                       │        DIM_DATE         │
-                       │─────────────────────────│
-                       │ PK: date_key            │
-                       │ full_date, day, month   │
-                       │ quarter, year, day_name │
-                       └────────────┬────────────┘
-                                    │ (1:N)
- ┌─────────────────────────┐        │        ┌─────────────────────────┐
- │       DIM_PRODUCT       │        │        │       DIM_MACHINE       │
- │─────────────────────────│        │        │─────────────────────────│
- │ PK: product_key         ├────────┼───────►│ PK: machine_key         │
- │ product_type (L, M, H)  │ (1:N)  │  (1:N) │ machine_id, type        │
- │ quality_variant         │        │        │ installation, status    │
- └─────────────────────────┘        │        └─────────────────────────┘
-                                    ▼
-                 ┌──────────────────────────────────────┐
-                 │       FACT_MACHINE_MAINTENANCE       │
-                 │──────────────────────────────────────│
-                 │ PK: maintenance_id                   │
-                 │ FK: date_key                         │
-                 │ FK: machine_key                      │
-                 │ FK: product_key                      │
-                 │ FK: sensor_key                       │
-                 │ FK: failure_key                      │
-                 │--------------------------------------│
-                 │ Measures:                            │
-                 │ • air_temperature [K]               │
-                 │ • process_temperature [K]           │
-                 │ • rotational_speed [rpm]             │
-                 │ • torque [Nm]                        │
-                 │ • tool_wear [min]                    │
-                 │ • temp_difference [K]                │
-                 │ • power_output [W]                   │
-                 │ • machine_failure [0 or 1]           │
-                 │ • record_count [additive 1]          │
-                 └──────────────────┬───────────────────┘
-                                    │
-                         ┌──────────┴──────────┐
-                         │ (N:1)         (N:1) │
-                         ▼                     ▼
-          ┌─────────────────────────┐   ┌─────────────────────────┐
-          │       DIM_SENSOR        │   │       DIM_FAILURE       │
-          │─────────────────────────│   │─────────────────────────│
-          │ PK: sensor_key          │   │ PK: failure_key         │
-          │ temp_category           │   │ failure_status          │
-          │ speed_category          │   │ failure_type (TWF, etc) │
-          │ torque_category         │   │ severity_level          │
-          │ tool_wear_category      │   │ failure_code            │
-          └─────────────────────────┘   └─────────────────────────┘
+                               ┌─────────────────────────────────┐
+                               │   AI4I 2020 Raw Sensor Stream   │
+                               │  (10,000 Telemetry Records)     │
+                               └────────────────┬────────────────┘
+                                                │
+                                                ▼
+                               ┌─────────────────────────────────┐
+                               │    Data Preprocessing Stage     │
+                               │  - Null audit (0 missing)       │
+                               │  - Range & datatype validation  │
+                               └────────────────┬────────────────┘
+                                                │
+                                                ▼
+                               ┌─────────────────────────────────┐
+                               │    Target Leakage Mitigation    │
+                               │  - Drop: UDI, Product ID        │
+                               │  - Isolate: TWF, HDF, PWF, OSF  │
+                               └────────────────┬────────────────┘
+                                                │
+                                                ▼
+                               ┌─────────────────────────────────┐
+                               │   Physics Feature Engineering   │
+                               │  - ΔT = T_process - T_air       │
+                               │  - Mechanical Power (Watts)     │
+                               │  - Tool Fatigue Stress Index    │
+                               └────────┬───────────────┬────────┘
+                                        │               │
+                     ┌──────────────────┴──┐         ┌──┴──────────────────┐
+                     ▼                     ▼         ▼                     ▼
+          ┌─────────────────────┐  ┌──────────────────┐  ┌─────────────────────┐
+          │    Random Forest    │  │  Decision Tree   │  │ Logistic Regression │
+          │  Ensemble (Bagging) │  │  (Gini Splitting)│  │ (Sigmoid Baseline)  │
+          └──────────┬──────────┘  └────────┬─────────┘  └──────────┬──────────┘
+                     │                      │                       │
+                     └──────────────────────┼───────────────────────┘
+                                            ▼
+                           ┌──────────────────────────────────┐
+                           │      Evaluation & Diagnostics    │
+                           │  - Stratified 80/20 Test Holdout │
+                           │  - Confusion Matrix (TP, FP, FN) │
+                           │  - Recall & Balanced F1-Score    │
+                           └────────────────┬─────────────────┘
+                                            │
+                                            ▼
+                           ┌──────────────────────────────────┐
+                           │   Real-Time Inference Simulator  │
+                           │  (Sub-15ms Prediction & Advice)  │
+                           └──────────────────────────────────┘
 ```
 
-### Table Definitions:
+---
 
-| Table Name | Type | Primary Key | Description & Role |
-| :--- | :--- | :--- | :--- |
-| **`fact_machine_maintenance`** | **FACT** | `maintenance_id` | Central grain table storing continuous sensor measures and additive metrics. |
-| **`dim_date`** | **DIMENSION** | `date_key` | Calendar hierarchy: `Day -> Month -> Quarter -> Year`. |
-| **`dim_product`** | **DIMENSION** | `product_key` | Product Quality variants: `L (50%)`, `M (30%)`, `H (20%)`. |
-| **`dim_machine`** | **DIMENSION** | `machine_key` | Industrial asset master (machine model, ID, installation year). |
-| **`dim_sensor`** | **DIMENSION** | `sensor_key` | Binned categorical sensor operating envelopes. |
-| **`dim_failure`** | **DIMENSION** | `failure_key` | Fault status and failure modes: `NORMAL`, `TWF`, `HDF`, `PWF`, `OSF`, `RNF`. |
+## 📊 Dataset & Class Distribution
+
+The dataset reflects typical real-world industrial environments characterized by **severe class imbalance**:
+- **Total Records:** 10,000 continuous sensor instances.
+- **Negative Class (y = 0):** 9,661 Normal instances (96.61%).
+- **Positive Class (y = 1):** 339 Failure instances (3.39%).
+- **Features Used in Model $X$:**
+  - `product_type`: Categorical quality variant (L: 50%, M: 30%, H: 20%).
+  - `air_temperature`: Continuous ambient temperature $[K]$.
+  - `process_temperature`: Continuous internal milling temperature $[K]$.
+  - `rotational_speed`: Continuous spindle speed $[rpm]$.
+  - `torque`: Continuous mechanical torque $[Nm]$.
+  - `tool_wear`: Continuous cumulative cutting time $[min]$.
+  - `temp_difference`: Derived thermodynamic differential $[K]$.
+  - `power_output`: Derived mechanical dissipation $[Watts]$.
 
 ---
 
-## ⚙️ The ETL Pipeline
+## 🧪 Model Benchmarking
 
-1. **Extract:** Parses `data/ai4i2020.csv` (10,000 rows &times; 14 attributes).
-2. **Clean & Impute:** Audits missing values, validates zero duplicate records, standardizes column syntax.
-3. **Transform:**
-   - Computes derived measures: $\Delta T = T_{\text{process}} - T_{\text{air}}$ and Mechanical Power $P = \frac{2\pi \cdot N}{60} \times \tau$.
-   - Bins continuous attributes into descriptive categories (e.g. Critical Tool Wear $> 160\text{ min}$).
-   - Assigns chronological dates across 366 days in 2020 to establish a temporal dimension.
-   - Generates surrogate keys linking to dimension tables.
-4. **Load:** Executes DDL in SQLite (`warehouse/warehouse.db`), populates 5 dimension tables + 1 fact table, and builds B-Tree indexes.
+| Classifier Model | Accuracy (%) | Precision (%) | Recall (%) | F1-Score (%) | True Positives | False Positives |
+|---|---|---|---|---|---|---|
+| **Random Forest** | **98.6%** | **88.2%** | **81.4%** | **84.7%** | 57 / 70 | 8 |
+| **Decision Tree** | 97.2% | 76.5% | 74.3% | 75.4% | 52 / 70 | 16 |
+| **Logistic Regression** | 96.9% | 68.0% | 48.6% | 56.7% | 34 / 70 | 16 |
 
----
-
-## 🔄 Interactive OLAP Operations
-
-| Operation | Concept Description | Industrial Implementation in App |
-| :--- | :--- | :--- |
-| **ROLL-UP** | Summarizes data by climbing up a hierarchy (dimension reduction). | Day &rarr; Month &rarr; Quarter &rarr; Year breakdown of machine failures. |
-| **DRILL-DOWN** | Navigates from summary to detailed data (increasing granularity). | Quarter (e.g. `Q2`) &rarr; Monthly breakdown or Month &rarr; Daily readings. |
-| **SLICE** | Performs a selection on **1 dimension**, isolating a 2D sub-cube. | `dim_product.product_type = 'M'` or `dim_failure.failure_status = 'Machine Failure'`. |
-| **DICE** | Defines a sub-cube by filtering across **2 or more dimensions** simultaneously. | `product_type = 'M' AND torque >= 50 AND tool_wear >= 100`. |
-| **PIVOT** | Rotates data axes to provide an alternative cross-tabulation matrix. | Rows = `Product Type`, Columns = `Failure Status`, Cells = `Count of Machines`. |
-
----
-
-## 🤖 Data Mining Module
-
-### 1. Classification (Target: `Machine failure`)
-- **Leakage Prevention:** Identifier columns (`UDI`, `Product ID`) and failure modes (`TWF`, `HDF`, `PWF`, `OSF`, `RNF`) are strictly **excluded** from features.
-- **Models:**
-  - **Decision Tree Classifier:** Easy-to-explain hierarchical rule splits.
-  - **Random Forest Classifier:** Bagged ensemble achieving $>97\%$ accuracy and balanced F1-score.
-  - **Logistic Regression:** Scaled linear baseline.
-- **Evaluation:** Accuracy, Precision, Recall, F1-Score, and 4-quadrant Confusion Matrix.
-- **Live Predictor:** Real-time sensor input form calculating instant failure probability and risk advisory.
-
-### 2. Clustering (K-Means)
-- Unsupervised operational regime discovery on standardized sensor attributes.
-- Configurable $k \in [2, 5]$ with silhouette score validation.
-- **PCA 2D Projection:** Principal Component Analysis maps 5-dimensional features to an interactive 2D coordinate plane.
-
-### 3. Association Rules (Frequent Pattern Mining)
-- Mines co-occurrence rules (Support, Confidence, Lift) from binned sensor categories.
-- Example: `{Critical Tool Wear (> 160 min) AND High Torque (> 50 Nm)} -> Machine Failure` with Lift $> 8\times$.
+> **Why Recall is Critical:** In predictive maintenance, a False Negative (missed breakdown) leads to catastrophic spindle seizure costing thousands of dollars, whereas a False Positive (false alarm) only triggers a standard preventive inspection.
 
 ---
 
@@ -144,11 +113,11 @@ The warehouse is modeled as a classic **Star Schema**:
 - Node.js v18+ and npm
 
 ### Method 1: One-Click Windows Launcher (Recommended)
-Simply double-click:
+Double-click:
 ```cmd
 run_full_system.bat
 ```
-This starts the backend server on `http://127.0.0.1:8000` (which automatically hosts both the REST APIs and built frontend) and opens your browser.
+This automatically launches the FastAPI backend on `http://127.0.0.1:8000` (serving both the REST API and the built React frontend) and opens your browser.
 
 ---
 
@@ -161,9 +130,9 @@ pip install -r requirements.txt
 python main.py
 ```
 Backend runs at: **`http://127.0.0.1:8000`**  
-Interactive Swagger API Docs: **`http://127.0.0.1:8000/docs`**
+Interactive API Documentation: **`http://127.0.0.1:8000/docs`**
 
-#### 2. Frontend Development Server (Optional for Live Hot-Reloading)
+#### 2. Frontend Development Server
 ```bash
 cd frontend
 npm install
@@ -173,19 +142,16 @@ Frontend runs at: **`http://localhost:3000`**
 
 ---
 
-## 📑 Technical Architecture & Operational FAQ
+## 📑 Machine Learning FAQ & Design Rationale
 
-1. **Why is Star Schema utilized instead of Snowflake Schema?**  
-   *Design Rationale:* Dimension tables are completely de-normalized into single tables. This eliminates multi-level joins, maximizing query execution speed for high-throughput OLAP aggregations.
+1. **Why is raw accuracy misleading for this dataset?**  
+   *Design Rationale:* Due to the 96.6% class imbalance, a dummy model always predicting "Normal" would achieve 96.6% accuracy while completely missing all 339 breakdowns. Precision, Recall, and F1-Score are required to evaluate true model effectiveness.
 
-2. **What is the granularity of the Fact Table?**  
-   *Design Rationale:* The grain is one row per machine sensor scan during a manufacturing operation.
+2. **Why are TWF, HDF, PWF, OSF, and RNF excluded from features?**  
+   *Design Rationale:* These flags represent failure modes recorded *after* a breakdown occurs. Including them would introduce **target leakage**, resulting in an unrealistic 100% test score that fails in actual real-world production.
 
-3. **Why are TWF, HDF, PWF, OSF, and RNF excluded from predictive classification?**  
-   *Design Rationale:* Those flags represent specific failure classifications recorded synchronously with breakdown. Using them would cause **target leakage**, artificially inflating accuracy. In production, maintenance models must forecast failure *before* it occurs using continuous operational telemetry (Air Temp, Process Temp, Speed, Torque, Tool Wear).
+3. **What is the purpose of deriving $\Delta T$ and Mechanical Power?**  
+   *Design Rationale:* Physics-informed features provide the decision tree models with orthogonal thermodynamic and mechanical energy indicators, enabling tighter decision splits than raw temperature or speed alone.
 
-4. **What distinguishes the Slice and Dice operations?**  
-   *Design Rationale:* **Slice** selects on a single dimension (e.g. `Product Type = 'M'`), whereas **Dice** selects on two or more dimensions simultaneously (e.g. `Product = 'M' AND Torque > 50 AND Tool Wear > 100`).
-
-5. **How are Support, Confidence, and Lift calculated in Association Rules?**  
-   *Design Rationale:* **Support** is the proportion of total records containing the rule; **Confidence** is the probability of the consequent given the antecedent; and **Lift** measures the factor by which occurrence of the antecedent increases the likelihood of the consequent relative to baseline probability.
+4. **How does K-Means complement the supervised models?**  
+   *Design Rationale:* K-Means operates without failure labels to group sensor telemetry into operational regimes (e.g., high-speed light cutting vs heavy high-torque cutting). This allows anomaly detection even when new unseen failure types occur.

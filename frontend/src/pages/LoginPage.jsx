@@ -61,8 +61,8 @@ export default function LoginPage({ onLogin }) {
                 <Cog className="w-7 h-7 text-white" />
               </div>
               <div>
-                <h1 className="text-base font-bold">Machine Health Monitor</h1>
-                <p className="text-xs text-blue-200">Factory Management System</p>
+                <h1 className="text-base font-bold">Predictive Maintenance ML</h1>
+                <p className="text-xs text-blue-200">Industrial Machine Learning Platform</p>
               </div>
             </div>
 
@@ -71,16 +71,16 @@ export default function LoginPage({ onLogin }) {
               Know before<br />your machine<br />breaks.
             </h2>
             <p className="text-sm text-blue-100 leading-relaxed mb-8">
-              Live prediction of machine failure — before it happens. Keep your factory running without unexpected breakdowns.
+              Real-time machine breakdown prediction powered by supervised learning models. Keep your factory running with zero unplanned downtime.
             </p>
 
             {/* Simple non-technical benefits */}
             <div className="space-y-4">
               {[
-                { icon: '🔮', text: 'Predict machine failure in advance' },
-                { icon: '⚙️', text: 'Monitor machines in real time' },
-                { icon: '📊', text: 'See which machines need attention' },
-                { icon: '🛠️', text: 'Plan maintenance before a breakdown' },
+                { icon: '🔮', text: 'Real-time failure inference (Random Forest, Decision Tree)' },
+                { icon: '⚙️', text: 'Continuous industrial telemetry monitoring' },
+                { icon: '📊', text: 'Physics-informed feature engineering & analytics' },
+                { icon: '🛠️', text: 'Prescriptive maintenance actions before seizure' },
               ].map((item) => (
                 <div key={item.text} className="flex items-center gap-3">
                   <span className="text-xl">{item.icon}</span>
@@ -90,8 +90,8 @@ export default function LoginPage({ onLogin }) {
             </div>
           </div>
 
-          <div className="mt-10 pt-6 border-t border-white/20 text-xs text-blue-700">
-            10,000 machine records analysed &bull; AI-powered predictions
+          <div className="mt-10 pt-6 border-t border-white/20 text-xs text-blue-200">
+            10,000 sensor cycles analyzed &bull; Scikit-Learn ML Engine
           </div>
         </div>
 

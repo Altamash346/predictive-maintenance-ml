@@ -15,8 +15,8 @@ from etl.etl_pipeline import ETLPipeline
 from routes.api import router as api_router
 
 app = FastAPI(
-    title="Predictive Maintenance Data Warehouse & Mining System (DWM)",
-    description="Industrial Star Schema Data Warehouse, ETL Pipeline, OLAP Cubes, and Machine Learning Mining Engine for AI4I 2020 Dataset",
+    title="Predictive Maintenance Machine Learning System",
+    description="Industrial Telemetry Ingestion, Feature Engineering Pipeline, Supervised Classification, Unsupervised Clustering, and Live Inference Engine for AI4I 2020 Dataset",
     version="1.0.0"
 )
 

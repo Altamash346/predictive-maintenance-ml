@@ -4,10 +4,7 @@ import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
 import DataExplorer from './pages/DataExplorer';
-import DataWarehouse from './pages/DataWarehouse';
-import StarSchemaView from './pages/StarSchemaView';
-import EtlPipelineView from './pages/EtlPipelineView';
-import OlapAnalysis from './pages/OlapAnalysis';
+import PipelineView from './pages/PipelineView';
 import DataMiningView from './pages/DataMiningView';
 import AnalyticsView from './pages/AnalyticsView';
 import FailurePredictor from './pages/FailurePredictor';
@@ -35,20 +32,17 @@ export default function App() {
     switch (activeTab) {
       case 'dashboard':
         return <Dashboard />;
-      case 'explorer':
-        return <DataExplorer />;
-      case 'warehouse':
-      case 'starschema':
-      case 'etl':
-        return <DataWarehouse />;
-      case 'olap':
-        return <OlapAnalysis />;
-      case 'mining':
-        return <DataMiningView />;
       case 'analytics':
         return <AnalyticsView />;
       case 'predictor':
         return <FailurePredictor />;
+      case 'explorer':
+        return <DataExplorer />;
+      case 'pipeline':
+        return <PipelineView />;
+      case 'mining':
+      case 'models':
+        return <DataMiningView />;
       case 'about':
         return <SystemDocumentation />;
       default:
